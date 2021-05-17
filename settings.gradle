@@ -1,2 +1,3 @@
 rootProject.name = "sdk-android"
 include ':sdk-android'
+include ':app'

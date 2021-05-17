@@ -156,8 +156,6 @@ class r3DeleteProxyResponse {
 public class API {
     private final static String LogTag = API.class.toString();
 
-    public static final String r3AccountName = "";
-    public static final String r3AccountPass = "";
     public static final int TCPServiceID = 1;
     public static final int BulkServiceID = 35;
     public static final int ManufactureID = 33024; // RemoteIT CLI

@@ -47,7 +47,7 @@ public class ProxyTransport implements Transport {
 			try {
 				updateConnectionStatus(TransportConnectionStatus.Connecting);
 
-				this.loginResponse = API.LoginWithUserPass(API.r3AccountName, API.r3AccountPass);
+				//this.loginResponse = API.LoginWithUserPass(API.r3AccountName, API.r3AccountPass);
 				this.createProxyResponse = API.CreateProxy(this.r3destinationDevice, this.loginResponse);
 				if (createProxyResponse == null
 						|| createProxyResponse.ProxyInfo == null

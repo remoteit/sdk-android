@@ -6,6 +6,12 @@ android {
     compileSdkVersion 30
     buildToolsVersion "30.0.3"
 
+    testOptions {
+        unitTests {
+            includeAndroidResources = true
+        }
+    }
+
     defaultConfig {
         minSdkVersion 21
         targetSdkVersion 30
