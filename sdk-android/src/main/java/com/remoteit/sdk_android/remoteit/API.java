@@ -280,7 +280,7 @@ public class API {
                 && !deleteDeviceResponse.Status.equals("true")) {
 
             Timber.e("Can't DELETE DEVICE: %s", deleteDeviceResponse.Reason);
-            System.out.println("Can't DELETE DEVICE: %s"+ deleteDeviceResponse.Reason);
+            System.out.println("Can't DELETE DEVICE: %s" + deleteDeviceResponse.Reason);
         }
     }
 
