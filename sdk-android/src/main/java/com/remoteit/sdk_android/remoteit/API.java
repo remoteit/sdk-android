@@ -264,7 +264,6 @@ public class API {
         return new RegisteredService();
     }
 
-
     public static void UnregisterDevice(LoginResponse loginResponse, RegisteredService registeredDevice) {
         String deleteDeviceResponseAsRaw = sendPOST_JSONGetJSON(
                 r3DeleteDeviceURL + registeredDevice.UID,

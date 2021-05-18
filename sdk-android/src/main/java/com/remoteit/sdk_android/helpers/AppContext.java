@@ -6,7 +6,7 @@ import android.content.Context;
 
 public class AppContext extends Application {
     @SuppressLint("StaticFieldLeak")
-    private static AppContext context;
+    private static Context context;
 
     public static Context getContext() {
         return context;

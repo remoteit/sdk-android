@@ -148,7 +148,7 @@ public class Device {
                             connectionStatusHandler.HandleTransportConnectionStatus(connectionStatus);
                         }
                     } else if (connectionStatus == TransportConnectionStatus.Connected) {
-                        startTargetPipe(connectionStatusHandler);
+                        startTargetPipe(connectionStatusHandler, context);
                         startLocalSocketServer();
                     }
                 });
@@ -159,7 +159,7 @@ public class Device {
     }
 
     @SuppressLint("DefaultLocale")
-    private void startTargetPipe(TransportConnectionStatusHandler connectionStatusHandler) {
+    private void startTargetPipe(TransportConnectionStatusHandler connectionStatusHandler, Context context) {
 
         // start tunnel/data transport service - marks service available on remoteit servers
         new Thread(() -> {
@@ -201,7 +201,7 @@ public class Device {
                 connectdArgsAsString = String.format("-s -e %s", connectdArgsAsString);
 
                 this.connectdTransport = new ConnectD();
-                this.connectdTransport.Run(AppContext.getContext(), connectdArgsAsString, connectionStatus -> {
+                this.connectdTransport.Run(context, connectdArgsAsString, connectionStatus -> {
                     if (connectionStatus == TransportConnectionStatus.Disconnected) {
                         GoOffline();
 
