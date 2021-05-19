@@ -2,6 +2,8 @@ package com.remoteit.sdk.sdk_android;
 
 import com.google.gson.Gson;
 import com.remoteit.sdk_android.Device;
+import com.remoteit.sdk_android.DeviceConfig;
+import com.remoteit.sdk_android.helpers.AppContext;
 import com.remoteit.sdk_android.remoteit.API;
 import com.remoteit.sdk_android.remoteit.LoginResponse;
 import com.remoteit.sdk_android.remoteit.RegisteredService;
@@ -87,5 +89,97 @@ public class ExampleUnitTest {
         System.out.println(loginResponse.toString() + "\n" + registeredDevice.toString());
     }
 
+    @Test
+    public void r3RegisterService() {
+        LoginResponse loginResponse = API.LoginWithUserPass(r3AccountName, r3AccountPass);
+        RegisteredService registeredDevice = API.RegisterDevice(loginResponse, deviceName);
+        RegisteredService registeredService = API.RegisterService(loginResponse, registeredDevice);
+
+        assertNotNull(registeredDevice.Secret);
+        assertNotNull(registeredService.Secret);
+
+        String registeredDeviceAsString = new Gson().toJson(registeredService);
+        Timber.d(registeredDeviceAsString);
+        System.out.println(registeredDeviceAsString);
+    }
+
+    @Test
+    public void r3UnregisterService() {
+        LoginResponse loginResponse = API.LoginWithUserPass(r3AccountName, r3AccountPass);
+        RegisteredService registeredDevice = API.RegisterDevice(loginResponse, deviceName);
+        RegisteredService registeredService = API.RegisterService(loginResponse, registeredDevice);
+
+        assertNotNull(registeredDevice.Secret);
+        assertNotNull(registeredService.Secret);
+
+        API.RemoveService(loginResponse, registeredService);
+        Timber.d(loginResponse.toString(), registeredDevice.toString());
+        System.out.println(loginResponse.toString() + "\n" + registeredDevice.toString());
+    }
+
+    @Test
+    public void r3RegisterDeviceAndServiceSaveConfig() {
+        LoginResponse loginResponse = API.LoginWithUserPass(r3AccountName, r3AccountPass);
+        Device.Instance().Register(loginResponse, deviceName);
+
+        String saveRegisteredDeviceAsString = new Gson().toJson(Device.Instance().Config());
+        Timber.d(saveRegisteredDeviceAsString);
+        System.out.println(saveRegisteredDeviceAsString);
+    }
+
+    @Test
+    public void r3InitDeviceFromConfig(){
+        LoginResponse loginResponse = API.LoginWithUserPass(r3AccountName, r3AccountPass);
+
+        Device.Instance().Register(loginResponse, deviceName);
+        String saveRegisteredDeviceAsString = new Gson().toJson(Device.Instance().Config());
+        DeviceConfig deviceConfig = new Gson().fromJson(saveRegisteredDeviceAsString, DeviceConfig.class);
+        assertNotNull(loginResponse);
+        assertNotNull(deviceConfig);
+
+        Device.InitFromConfig(deviceConfig);
+        Timber.d(loginResponse.toString(), deviceConfig.toString());
+        System.out.println(loginResponse.toString() + "\n" + deviceConfig.toString());
+    }
+
+    @Test
+    public void r3UnregisterDeviceAndServiceFromConfig() {
+        LoginResponse loginResponse = API.LoginWithUserPass(r3AccountName, r3AccountPass);
+
+        Device.Instance().Register(loginResponse, deviceName);
+        String saveRegisteredDeviceAsString = new Gson().toJson(Device.Instance().Config());
+        DeviceConfig deviceConfig = new Gson().fromJson(saveRegisteredDeviceAsString, DeviceConfig.class);
+        Device.InitFromConfig(deviceConfig);
+        assertNotNull(loginResponse);
+        assertNotNull(deviceConfig);
+
+        Device.Instance().UnRegister(loginResponse);
+        Timber.d(loginResponse.toString(), deviceConfig.toString());
+        System.out.println(loginResponse.toString() + "\n" + deviceConfig.toString());
+    }
+
+    @Test
+    public void r3BringOnline() {
+        LoginResponse loginResponse = API.LoginWithUserPass(r3AccountName, r3AccountPass);
+        Device.Instance().Register(loginResponse, deviceName);
+        assertNotNull(loginResponse);
+
+        Device.Instance().BringOnline(connectionStatus -> {
+            Timber.d(connectionStatus.toString());
+            System.out.println(connectionStatus.toString());
+        }, AppContext.getContext());
+    }
+
+    @Test
+    public void r3GoOffline() {
+        LoginResponse loginResponse = API.LoginWithUserPass(r3AccountName, r3AccountPass);
+        Device.Instance().Register(loginResponse, "r3-DEBUG");
+
+        Device.Instance().BringOnline(connectionStatus -> {
+            Timber.d(connectionStatus.toString());
+            System.out.println(connectionStatus.toString());
+        }, AppContext.getContext());
+        Device.Instance().GoOffline();
+    }
 
 }
