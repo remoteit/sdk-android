@@ -1,5 +1,8 @@
 package com.remoteit.sdk.sdk_android;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+
 import com.google.gson.Gson;
 import com.remoteit.sdk_android.Device;
 import com.remoteit.sdk_android.DeviceConfig;
@@ -128,7 +131,7 @@ public class ExampleUnitTest {
     }
 
     @Test
-    public void r3InitDeviceFromConfig(){
+    public void r3InitDeviceFromConfig() {
         LoginResponse loginResponse = API.LoginWithUserPass(r3AccountName, r3AccountPass);
 
         Device.Instance().Register(loginResponse, deviceName);
@@ -182,4 +185,55 @@ public class ExampleUnitTest {
         Device.Instance().GoOffline();
     }
 
+    @Test
+    public void r3RegisterDeviceServiceGoOnline() {
+        // REMOTEIT: Register + Bring online with remoteit servers
+        LoginResponse loginResponse = API.LoginWithUserPass(r3AccountName, r3AccountPass);
+        Device.Instance().Register(loginResponse, deviceName);
+        Device.Instance().BringOnline(connectionStatus -> {
+            Timber.d(connectionStatus.toString());
+            System.out.println(connectionStatus.toString());
+        }, AppContext.getContext());
+
+        // REMOTEIT: Save settings to local or choose another storage method (Cloud etc.)
+        String configAsString = new Gson().toJson(Device.Instance().Config());
+        SharedPreferences sharedPreferences = AppContext.getContext().getSharedPreferences("r3settings", Context.MODE_PRIVATE);
+        sharedPreferences.edit().putString(deviceName, configAsString).apply();
+        assertNotNull(sharedPreferences);
+        assertNotNull(configAsString);
+    }
+
+    @Test
+    public void r3GoOnlineOnCreate() {
+        // REMOTEIT: Get settings from local or another storage where you kept it
+        SharedPreferences sharedPreferences = AppContext.getContext().getSharedPreferences("r3settings", Context.MODE_PRIVATE);
+        assertNotNull(sharedPreferences);
+        String configAsString = sharedPreferences.getString(deviceName, null);
+        if (configAsString != null && !configAsString.equals("")) {
+            DeviceConfig deviceConfig = new Gson().fromJson(configAsString, DeviceConfig.class);
+            Device.InitFromConfig(deviceConfig);
+
+            //REMOTEIT: Bring Online
+            Device.Instance().BringOnline(connectionStatus -> {
+                Timber.d(connectionStatus.toString());
+                System.out.println(connectionStatus.toString());
+            }, AppContext.getContext());
+        }
+    }
+
+    @Test
+    public void r3RemoveRegisteredDevice() {
+        // REMOTEIT: Delete settings from local or another storage where you kept it
+        SharedPreferences sharedPreferences = AppContext.getContext().getSharedPreferences("r3settings", Context.MODE_PRIVATE);
+        sharedPreferences.edit().clear().apply();
+
+        // REMOTE-IT: unregister device
+        Device.Instance().GoOffline();
+        LoginResponse loginResponse = API.LoginWithUserPass(r3AccountName, r3AccountPass);
+        assertNotNull(loginResponse);
+
+        Device.Instance().UnRegister(loginResponse);
+        Timber.d(loginResponse.toString());
+        System.out.println(loginResponse.toString());
+    }
 }
