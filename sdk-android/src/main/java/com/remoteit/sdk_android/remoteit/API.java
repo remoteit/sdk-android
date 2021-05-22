@@ -316,7 +316,7 @@ public class API {
         r3RegisterServiceRequest registerServiceRequest = new r3RegisterServiceRequest();
         registerServiceRequest.UID = serviceID;
         registerServiceRequest.ServiceType = createServiceRequest.ServiceType;
-        registerServiceRequest.Name = "d360-data-transport";
+        registerServiceRequest.Name = "r3-data-transport";
         registerServiceRequest.HardwareID = registeredDevice.UID;
         registerServiceRequest.SkipSecret = "true";
         registerServiceRequest.SkipEmail = "true"; // skip for non-bulk, don't ask why

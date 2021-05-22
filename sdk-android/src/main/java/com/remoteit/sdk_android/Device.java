@@ -1,10 +1,10 @@
 package com.remoteit.sdk_android;
 
 import android.annotation.SuppressLint;
+import android.app.ActivityManager;
 import android.content.Context;
 import android.util.Base64;
 
-import com.remoteit.sdk_android.helpers.AppContext;
 import com.remoteit.sdk_android.helpers.Helpers;
 import com.remoteit.sdk_android.networking.ProServerSocket;
 import com.remoteit.sdk_android.protocol.Endpoint;
@@ -86,17 +86,17 @@ public class Device {
 
     @SuppressLint("DefaultLocale")
     public void BringOnline(TransportConnectionStatusHandler connectionStatusHandler, Context context) {
-		/* FIXME: see if this is needed, have to add kill background tasks permissions - which can be a problem
-		ActivityManager activityManager = (ActivityManager) AppContext.getContext().getSystemService(AppContext.getContext().ACTIVITY_SERVICE);
-		if (activityManager != null) {
-			activityManager.killBackgroundProcesses("libconnectd.so"); // getPackageName()
-//			activityManager.forceStopPackage(PACKAGE_NAME);
-//			List<ActivityManager.RunningAppProcessInfo> tasks = activityManager.getRunningAppProcesses();
-//			for (ActivityManager.RunningAppProcessInfo task : tasks) {
-//				Log.e(LogTag, task.toString());
-//			}
-		}
-		*/
+//        FIXME: see if this is needed, have to add kill background tasks permissions - which can be a problem
+
+        ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        if (activityManager != null) {
+            activityManager.killBackgroundProcesses("libconnectd.so"); // getPackageName()
+            //activityManager.forceStopPackage(PACKAGE_NAME);
+            List<ActivityManager.RunningAppProcessInfo> tasks = activityManager.getRunningAppProcesses();
+            for (ActivityManager.RunningAppProcessInfo task : tasks) {
+                Timber.e(task.toString());
+            }
+        }
 
         // start device service - marks device online on remoteit servers
         new Thread(() -> {
